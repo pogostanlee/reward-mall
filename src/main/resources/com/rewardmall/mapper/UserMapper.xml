@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rewardmall.mapper.UserMapper">
+
+    <select id="fingByUserName" resultType="User">
+        select * from branches where number=#{number}
+    </select>
+
+    <update id="updatePwd">
+        update branches set password = #{pass} where id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://182.92.183.69:3306/reward_mall
+    username: root
+    password: ma1LIZHUZ!
+    type: com.alibaba.druid.pool.DruidDataSource
+  data:
+    redis:
+      host: 182.92.183.69
+      port: 6379
+      password: ma1LIZHU
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.rewardmall.pojo
