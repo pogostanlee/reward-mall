@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
+    //登录
     @Override
     public User fingByUserName(String number) {
         User user = userMapper.fingByUserName(number);
         return user;
     }
-
+    //更改密码
     @Override
     public void updatePwd(Integer id, String pass) {
 

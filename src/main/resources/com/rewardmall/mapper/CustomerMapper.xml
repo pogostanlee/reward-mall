@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rewardmall.mapper.CustomerMapper">
+
+    <select id="selectList" resultType="com.rewardmall.pojo.Customer">
+        select * from customers<where>
+        <if test="customerQueryVO.branchId != null and customerQueryVO.branchId!= ''">
+            and branchId = #{customerQueryVO.branchId}
+        </if>
+        <if test="customerQueryVO.name != null and customerQueryVO.name!= ''">
+            and name like concat('%',#{customerQueryVO.name},'%')
+        </if>
+        <if test="customerQueryVO.phone != null and customerQueryVO.phone!= ''">
+            and phone like concat('%',#{customerQueryVO.phone},'%')
+        </if>
+        <if test="customerQueryVO.startNumber != null and customerQueryVO.startNumber!= ''and customerQueryVO.endNumber != null and customerQueryVO.endNumber!= '' ">
+            and totalDeposit between #{customerQueryVO.startNumber} and #{customerQueryVO.endNumber}
+        </if>
+        <if test="customerQueryVO.manager != null and customerQueryVO.manager!= ''">
+            and manager like concat('%',#{customerQueryVO.manager},'%')
+        </if>
+        <if test="customerQueryVO.idNumber != null and customerQueryVO.idNumber!= ''">
+            and idNumber like concat('%',#{customerQueryVO.idNumber},'%')
+        </if>
+    </where>
+        order by totalDeposit
+    </select>
+    <!--添加用户信息-->
+    <insert id="add">
+        insert into customers(name, phone, idNumber, manager, branchId) values(#{customer.name}, #{customer.phone}, #{customer.idNumber}, #{customer.manager}, #{customer.branchId})
+    </insert>
+
+    <select id="selectByIdNumber" resultType="com.rewardmall.pojo.Customer">
+        select * from customers where idNumber = #{idNumber}
+    </select>
+</mapper>
