@@ -38,4 +38,11 @@ public class CustomerServiceImpl implements CuntomerService {
 
         customerMapper.add(customer);
     }
+    //根据身份证查询用户信息
+    @Override
+    public Customer selectByIdNumber(String idNumber) {
+        //获取前端传递数据进行查询
+        Customer customer = customerMapper.selectByIdNumber(idNumber);
+        return customer;
+    }
 }

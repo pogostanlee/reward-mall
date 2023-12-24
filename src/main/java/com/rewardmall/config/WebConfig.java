@@ -29,14 +29,11 @@ public class WebConfig implements WebMvcConfigurer {
         return new com.rewardmall.convert.DateConvert();
     }
 
-    //配置跨域访问 与上面冲突
+
 //    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOriginPatterns("*")// 允许所有域名跨域访问
-//                .allowedMethods("*")
-//                .allowedHeaders("*")
-//                .allowCredentials(true)
-//                .maxAge(3600);
+//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        FormHttpMessageConverter formConverter = new FormHttpMessageConverter();
+//        converters.add(formConverter);
 //    }
+
 }

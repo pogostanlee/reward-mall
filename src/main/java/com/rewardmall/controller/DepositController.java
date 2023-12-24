@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DepositController {
     @Autowired
     private DepositService depositService;
-
+    //获取存款列表
     @RequestMapping("/depositList")
     public PageBean<Deposit> list(String idNumber,Long currentPage,Long pageSize) {
         //获取前端传递数据进行查询
@@ -31,10 +31,17 @@ public class DepositController {
         }
         return null;
     }
+    //新增存款
     @RequestMapping("/addDeposit")
     public Result<String> add(DepositQueryVO depositQueryVO) {
         //获取前端传递数据进行添加
         Result<String> result = depositService.add(depositQueryVO);
+        return result;
+    }
+    //删除存款记录
+    @RequestMapping("/deleteId")
+    public Result<String> deleteId(Deposit deposit) {
+        Result<String> result = depositService.deleteId(deposit);
         return result;
     }
 }

@@ -10,4 +10,6 @@ public interface DepositService {
     Page<Deposit> listByIdNumber(String idNumber, Long currentPage, Long pageSize);
     //添加存款
     Result<String> add(DepositQueryVO depositQueryVO);
+    //删除存款记录
+    Result<String> deleteId(Deposit deposit);
 }

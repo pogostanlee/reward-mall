@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rewardmall.mapper.OutboundRecordMapper">
+
+    <insert id="insert">
+        insert into outboundRecords ( branchId,customerIdNumber,productId,quantity,points,name,date) values (#{branchId}, #{customerIdNumber}, #{productId},#{quantity}, #{points}, #{name}, now())
+    </insert>
+</mapper>

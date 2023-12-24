@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rewardmall.mapper.InventoryMapper">
+
+    <select id="getNumberByProductIdAndBranchId" resultType="java.lang.Integer">
+        select quantity from inventory where productId = #{productId} and branchId = #{branchId}
+    </select>
+
+    <update id="updateNumberByProductIdAndBranchId">
+        update inventory set quantity = #{quantity} where productId = #{id} and branchId = #{branchId}
+    </update>
+</mapper>

@@ -35,5 +35,15 @@ public class CustomerController {
         customerService.add(customer);
         return Result.success("添加成功");
     }
-    //查询储户存款信息 /deposit/depositList
+    //根据身份证查询用户信息
+    @RequestMapping("/selectByIdNumber")
+    public Result<Customer> selectByIdNumber(String idNumber) {
+        //获取前端传递数据进行查询
+        Customer customer = customerService.selectByIdNumber(idNumber);
+        //非空判断
+        if (customer == null) {
+            return Result.error("用户不存在");
+        }
+        return Result.success(customer);
+    }
 }
