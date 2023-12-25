@@ -41,7 +41,6 @@ public class DepositServiceImpl implements DepositService {
         Integer branchId = (Integer) claims.get("number");
         //根据身份证号查询
         Page<Deposit> pageInfo = depositMapper.listByIdNumber(page, idNumber, branchId);
-
         return pageInfo;
     }
 
