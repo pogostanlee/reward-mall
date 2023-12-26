@@ -31,8 +31,9 @@ public class ProductServiceImpl implements ProductService {
     //获取商品列表
     @Override
     public Result<List<Product>> list() {
-
-        List<Product> products = productMapper.selectList(null);
+        QueryWrapper<Product> productQueryWrapper = new QueryWrapper<>();
+        productQueryWrapper.eq("isActive", 1);
+        List<Product> products = productMapper.selectList(productQueryWrapper);
 
         return products == null ? Result.error("获取商品列表失败") : Result.success(products);
     }
@@ -44,20 +45,21 @@ public class ProductServiceImpl implements ProductService {
         Customer customer = customerMapper.selectByIdNumber(products.get(0).getCustomerId());
         //判断用户是否存在
         if (customer == null) {
-            return Result.error("用户不存在");
+            throw new RuntimeException("用户不存在");
         }
         //根据id查询商品信息并计算总价
         Integer totalPrice = 0;
         for (ProductVO product : products) {
             Product product1 = productMapper.selectById(product.getId());
             if (product1 == null) {
-                return Result.error("商品不存在");
+                throw new RuntimeException("商品不存在");
             }
             totalPrice += product1.getPrice() * product.getNum();
         }
         //判断用户积分是否足够
         if (customer.getPoints() < totalPrice) {
-            return Result.error("用户积分不足");
+            throw new RuntimeException("用户积分不足");
+
         }
         //扣除用户积分
         customer.setPoints(customer.getPoints() - totalPrice);
@@ -65,8 +67,13 @@ public class ProductServiceImpl implements ProductService {
         //查询商品库存并判断是否足够
         for (ProductVO product : products) {
             Integer number = inventoryMapper.getNumberByProductIdAndBranchId(product.getId(), customer.getBranchId());
+            //判断number是否为空
+            if (number == null) {
+                throw new RuntimeException("商品库存不足");
+
+            }
             if (number < product.getNum()) {
-                return Result.error("商品库存不足");
+                throw new RuntimeException("商品库存不足");
             }
             //扣除商品库存
             inventoryMapper.updateNumberByProductIdAndBranchId(product.getId(), customer.getBranchId(), number - product.getNum());
@@ -145,8 +152,8 @@ public class ProductServiceImpl implements ProductService {
         HashMap<String, Object> claims = ThreadLocalUtil.get();
         Integer branchId = (Integer) claims.get("number");
         //封装查询条件
-            //判断id非空
-        if (id == null||id.equals("")) {
+        //判断id非空
+        if (id == null || id.equals("")) {
             //id为空，查询所有
             QueryWrapper<Inventory> inventoryQueryWrapper = new QueryWrapper<>();
             inventoryQueryWrapper.eq("branchId", branchId);

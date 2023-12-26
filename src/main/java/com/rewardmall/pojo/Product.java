@@ -19,5 +19,6 @@ public class Product {
     private String name;
     @TableField("price")
     private Integer price;
-
+    @TableField("isActive")
+    private Integer isActive;
 }

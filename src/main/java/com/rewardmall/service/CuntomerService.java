@@ -2,6 +2,7 @@ package com.rewardmall.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rewardmall.pojo.Customer;
+import com.rewardmall.pojo.PageBean;
 import com.rewardmall.pojo.VO.CustomerQueryVO;
 
 public interface CuntomerService {
@@ -13,4 +14,6 @@ public interface CuntomerService {
 
     //根据身份证查询用户信息
     Customer selectByIdNumber(String idNumber);
+    //获取所有用户信息(admin)
+    PageBean<Customer> adminList(CustomerQueryVO customerQueryVO);
 }
