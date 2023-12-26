@@ -112,7 +112,7 @@ public class AdminController {
         return result;
     }
 
-    //全量导出用户信息
+    //全量导出用户信息（需要修复）
     @RequestMapping("/exportCustomer")
     public void exportCustomer(HttpServletResponse response) {
         adminService.exportCustomer(response);
