@@ -1,24 +1,31 @@
 package com.rewardmall.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.rewardmall.mapper.CustomerMapper;
 import com.rewardmall.mapper.InboundRecordMapper;
 import com.rewardmall.mapper.InventoryMapper;
+import com.rewardmall.pojo.Customer;
 import com.rewardmall.pojo.InboundRecord;
 import com.rewardmall.pojo.Inventory;
 import com.rewardmall.pojo.Result;
 import com.rewardmall.service.AdminService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
-public class AdminServiceImpl  implements AdminService {
+public class AdminServiceImpl implements AdminService {
     @Autowired
     private InventoryMapper inventoryMapper;
     @Autowired
     private InboundRecordMapper inboundRecordMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Override
     @Transactional
@@ -58,5 +65,26 @@ public class AdminServiceImpl  implements AdminService {
             inboundRecordMapper.insert(inboundRecord);
             return Result.success("添加库存成功");
         }
+    }
+
+    //导出excel
+    @Override
+    public void exportCustomer(HttpServletResponse response) {
+        try {
+            //设置excel下载响应头
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding("utf-8");
+            response.setHeader("Content-disposition", "attachment;filename=customer.xlsx");
+
+            //获取所有用户信息
+            List<Customer> customers = customerMapper.selectAll();
+            //创建excel
+            EasyExcel.write(response.getOutputStream(), Customer.class).sheet("用户信息").doWrite(customers);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 }

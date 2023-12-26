@@ -39,6 +39,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--测试类-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -55,7 +56,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-
         <!--java-jwt坐标-->
         <dependency>
             <groupId>com.auth0</groupId>
@@ -69,9 +69,12 @@
             <artifactId>druid</artifactId>
             <version>1.2.16</version>
         </dependency>
-         <!--热部署-->
-
-
+         <!--easy excel-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>3.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>

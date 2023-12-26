@@ -2,7 +2,6 @@ package com.rewardmall.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rewardmall.mapper.InboundRecordMapper;
 import com.rewardmall.mapper.InventoryMapper;
 import com.rewardmall.mapper.ProductMapper;
 import com.rewardmall.mapper.UserMapper;
@@ -10,6 +9,7 @@ import com.rewardmall.pojo.*;
 import com.rewardmall.pojo.VO.CustomerQueryVO;
 import com.rewardmall.service.AdminService;
 import com.rewardmall.service.CuntomerService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -110,5 +110,11 @@ public class AdminController {
     public Result<String> addInventory(Integer productId, Integer branchId, Integer quantity) {
         Result<String> result = adminService.addInventory(productId, branchId, quantity);
         return result;
+    }
+
+    //全量导出用户信息
+    @RequestMapping("/exportCustomer")
+    public void exportCustomer(HttpServletResponse response) {
+        adminService.exportCustomer(response);
     }
 }

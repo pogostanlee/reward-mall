@@ -7,6 +7,8 @@ import com.rewardmall.pojo.VO.CustomerQueryVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface CustomerMapper extends BaseMapper<Customer> {
     //查询用户信息
@@ -16,4 +18,6 @@ public interface CustomerMapper extends BaseMapper<Customer> {
     void add(@Param("customer") Customer customer);
     //根据身份证查询用户
     Customer selectByIdNumber(@Param("idNumber") String idNumber);
+    //获取所有用户信息
+    List<Customer> selectAll();
 }

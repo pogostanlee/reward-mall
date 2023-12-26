@@ -33,4 +33,8 @@
     <select id="selectByIdNumber" resultType="com.rewardmall.pojo.Customer">
         select * from customers where idNumber = #{idNumber}
     </select>
+
+    <select id="selectAll" resultType="com.rewardmall.pojo.Customer">
+        select * from customers
+    </select>
 </mapper>
