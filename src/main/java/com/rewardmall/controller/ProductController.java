@@ -31,7 +31,6 @@ public class ProductController {
     //兑换礼品
     @RequestMapping("/exchange")
     public Result<String> exchange(@RequestBody List<ProductVO> products) {
-        System.out.println(products);
         //
         Result<String> result = productService.exchange(products);
         return result;

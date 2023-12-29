@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.HashMap;
 
 @Service
@@ -71,18 +70,18 @@ public class DepositServiceImpl implements DepositService {
         Integer points = (int) (depositQueryVO.getDeposit() / 100 * ACTIVITY_RATE);
         //判断存款日期是否为生日
         //获取存款日期
-        Date depositDate = depositQueryVO.getDepositDate();
-        //获取存款日期的月份与日子并设置格式为两位数
-        String depositMonth = String.format("%02d", depositDate.getMonth() + 1);
-        String depositDay = String.format("%02d", depositDate.getDate());
-        //获取客户生日
-        String month = idNumber.substring(10, 12);
-        String day = idNumber.substring(12, 14);
-        //判断存款日期是否为生日
-        if (depositMonth.equals(month) && depositDay.equals(day)) {
-            //是生日，积分翻倍
-            points = points * 2;
-        }
+//        Date depositDate = depositQueryVO.getDepositDate();
+//        //获取存款日期的月份与日子并设置格式为两位数
+//        String depositMonth = String.format("%02d", depositDate.getMonth() + 1);
+//        String depositDay = String.format("%02d", depositDate.getDate());
+//        //获取客户生日
+//        String month = idNumber.substring(10, 12);
+//        String day = idNumber.substring(12, 14);
+//        //判断存款日期是否为生日
+//        if (depositMonth.equals(month) && depositDay.equals(day)) {
+//            //是生日，积分翻倍
+//            points = points * 2;
+//        }
         //获取支行branchId
         HashMap<String, Object> claims = ThreadLocalUtil.get();
         Integer branchId = (Integer) claims.get("number");
@@ -94,8 +93,13 @@ public class DepositServiceImpl implements DepositService {
         deposit.setDepositDate(depositQueryVO.getDepositDate());
         deposit.setMaturityDate(depositQueryVO.getMaturityDate());
         deposit.setGetPoints(points);
-        deposit.setActivity(activitied.getName());
+        deposit.setActivity(activitied != null ? activitied.getName() : "无");
         deposit.setName(customer.getName());
+        deposit.setIsNewDeposit(depositQueryVO.getIsNewDeposit());
+        deposit.setReceptionist(depositQueryVO.getReceptionist());
+        deposit.setDepositAccount(depositQueryVO.getDepositAccount());
+        deposit.setSubDepositAccount(depositQueryVO.getSubDepositAccount());
+        deposit.setMonthDiff(depositQueryVO.getMonthDiff());
         //添加存款记录
         int count = depositMapper.insert(deposit);
         //判断是否添加成功

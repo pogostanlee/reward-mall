@@ -40,9 +40,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    //兑换礼品
     public Result<String> exchange(List<ProductVO> products) {
-        //根据身份证查询用户信息
-        Customer customer = customerMapper.selectByIdNumber(products.get(0).getCustomerId());
+        //根据身份证和branchId查询用户信息
+        HashMap<String,Object> claims = ThreadLocalUtil.get();
+        Integer branchId= (Integer) claims.get("number");
+        String idNumber= (String) products.get(0).getCustomerId();
+        Customer customer = customerMapper.selectcustomer(idNumber,branchId);
         //判断用户是否存在
         if (customer == null) {
             throw new RuntimeException("用户不存在");

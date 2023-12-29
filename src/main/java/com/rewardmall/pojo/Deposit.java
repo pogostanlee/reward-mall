@@ -42,4 +42,14 @@ public class Deposit {
     private String activity;//参与的活动
     @TableField("name")
     private String name;//客户姓名
+    @TableField("isNewDeposit")
+    private Integer isNewDeposit;//是否是新存款
+    @TableField("receptionist")
+    private String receptionist;//揽存人
+    @TableField("depositAccount")
+    private String depositAccount;//存款账户
+    @TableField("subDepositAccount")
+    private String subDepositAccount;//子账户
+    @TableField("monthDiff")
+    private Integer monthDiff;//存款期限
 }

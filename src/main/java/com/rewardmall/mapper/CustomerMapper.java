@@ -20,4 +20,7 @@ public interface CustomerMapper extends BaseMapper<Customer> {
     Customer selectByIdNumber(@Param("idNumber") String idNumber);
     //获取所有用户信息
     List<Customer> selectAll();
+    //根据身份证和branchId查询用户信息
+
+    Customer selectcustomer(@Param("idNumber") String idNumber, @Param("branchId") Integer branchId);
 }
