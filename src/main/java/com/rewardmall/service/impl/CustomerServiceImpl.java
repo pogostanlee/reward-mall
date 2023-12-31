@@ -32,11 +32,16 @@ public class CustomerServiceImpl implements CuntomerService {
     //添加新用户
     @Override
     public void add(Customer customer) {
+        String idNumber = customer.getIdNumber();
         //封装支行id
         HashMap<String,Object> claims = ThreadLocalUtil.get();
-
-        customer.setBranchId((Integer) claims.get("number"));
-
+        Integer branchId = (Integer) claims.get("number");
+        customer.setBranchId(branchId);
+        //查询客户是否存在
+        Customer customer1 = customerMapper.selectByIdNumberAndBranchId(idNumber, branchId);
+        if (customer1!=null){
+            throw new RuntimeException("该用户已存在");
+        }
         customerMapper.add(customer);
     }
     //根据身份证查询用户信息
@@ -61,9 +66,6 @@ public class CustomerServiceImpl implements CuntomerService {
         }
         if (customerQueryVO.getIdNumber()!=null){
             customerQueryWrapper.like("idNumber",customerQueryVO.getIdNumber());
-        }
-        if (customerQueryVO.getManager()!=null){
-            customerQueryWrapper.like("manager",customerQueryVO.getManager());
         }
         if(customerQueryVO.getStartNumber()!=null&&customerQueryVO.getEndNumber()!=null){
             customerQueryWrapper.between("totalDeposit",customerQueryVO.getStartNumber(),customerQueryVO.getEndNumber());

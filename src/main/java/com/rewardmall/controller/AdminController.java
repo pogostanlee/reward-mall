@@ -7,6 +7,7 @@ import com.rewardmall.mapper.ProductMapper;
 import com.rewardmall.mapper.UserMapper;
 import com.rewardmall.pojo.*;
 import com.rewardmall.pojo.VO.CustomerQueryVO;
+import com.rewardmall.pojo.VO.DepositQueryVO;
 import com.rewardmall.service.AdminService;
 import com.rewardmall.service.CuntomerService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,8 +42,10 @@ public class AdminController {
     //获取所有支行信息
     @RequestMapping("/branchList")
     public Result<List<User>> branchList() {
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("isAdmin", 0);
         //获取前端传递数据进行查询
-        List<User> list = userMapper.selectList(null);
+        List<User> list = userMapper.selectList(userQueryWrapper);
         //封装返回数据
         return Result.success(list);
     }
@@ -112,9 +115,21 @@ public class AdminController {
         return result;
     }
 
-    //全量导出用户信息（需要修复）
+    //全量导出用户信息
     @RequestMapping("/exportCustomer")
     public void exportCustomer(HttpServletResponse response) {
         adminService.exportCustomer(response);
     }
+    //查询所有存款信息
+    @RequestMapping("/getDeposit")
+    public PageBean<Deposit> getDeposit(DepositQueryVO depositQueryVO, Long currentPage, Long pageSize) {
+        PageBean<Deposit> depositPageBean = adminService.getAllDeposit(depositQueryVO, currentPage, pageSize);
+        return depositPageBean;
+    }
+    //导出所有存款信息
+    @RequestMapping("/exportDeposit")
+    public void exportDeposit(HttpServletResponse response, DepositQueryVO depositQueryVO) {
+        adminService.exportDeposit(response, depositQueryVO);
+    }
+
 }

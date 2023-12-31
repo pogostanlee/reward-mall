@@ -10,5 +10,5 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface DepositMapper extends BaseMapper<Deposit> {
     //根据身份证号查询存款
-    Page<Deposit> listByIdNumber(Page<Customer> page, @Param("idNumber") String idNumber, @Param("branchId") Integer branchId);
+    Page<Deposit> listByIdNumber(Page<Deposit> page, @Param("idNumber") String idNumber, @Param("branchId") Integer branchId);
 }

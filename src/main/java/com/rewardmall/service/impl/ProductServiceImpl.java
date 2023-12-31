@@ -2,11 +2,10 @@ package com.rewardmall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rewardmall.mapper.CustomerMapper;
-import com.rewardmall.mapper.InventoryMapper;
-import com.rewardmall.mapper.OutboundRecordMapper;
-import com.rewardmall.mapper.ProductMapper;
+import com.rewardmall.mapper.*;
 import com.rewardmall.pojo.*;
+import com.rewardmall.pojo.VO.InboundQueryVO;
+import com.rewardmall.pojo.VO.ProdcutQueryVO;
 import com.rewardmall.pojo.VO.ProductVO;
 import com.rewardmall.service.ProductService;
 import com.rewardmall.utils.ThreadLocalUtil;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,6 +27,8 @@ public class ProductServiceImpl implements ProductService {
     private InventoryMapper inventoryMapper;
     @Autowired
     private OutboundRecordMapper outboundRecordMapper;
+    @Autowired
+    private InboundRecordMapper inboundRecordMapper;
 
     //获取商品列表
     @Override
@@ -43,10 +45,10 @@ public class ProductServiceImpl implements ProductService {
     //兑换礼品
     public Result<String> exchange(List<ProductVO> products) {
         //根据身份证和branchId查询用户信息
-        HashMap<String,Object> claims = ThreadLocalUtil.get();
-        Integer branchId= (Integer) claims.get("number");
-        String idNumber= (String) products.get(0).getCustomerId();
-        Customer customer = customerMapper.selectcustomer(idNumber,branchId);
+        HashMap<String, Object> claims = ThreadLocalUtil.get();
+        Integer branchId = (Integer) claims.get("number");
+        String idNumber = (String) products.get(0).getCustomerId();
+        Customer customer = customerMapper.selectcustomer(idNumber, branchId);
         //判断用户是否存在
         if (customer == null) {
             throw new RuntimeException("用户不存在");
@@ -73,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
             Integer number = inventoryMapper.getNumberByProductIdAndBranchId(product.getId(), customer.getBranchId());
             //判断number是否为空
             if (number == null) {
-                throw new RuntimeException("商品库存不足");
+                throw new RuntimeException("商品未入库，请先入库商品");
 
             }
             if (number < product.getNum()) {
@@ -82,26 +84,37 @@ public class ProductServiceImpl implements ProductService {
             //扣除商品库存
             inventoryMapper.updateNumberByProductIdAndBranchId(product.getId(), customer.getBranchId(), number - product.getNum());
             //添加出库记录
-            outboundRecordMapper.insert(customer.getBranchId(), customer.getIdNumber(), product.getId(), product.getNum(), product.getPrice() * product.getNum(), customer.getName());
+            outboundRecordMapper.insert(customer.getBranchId(), customer.getIdNumber(), product.getId(), product.getNum(), product.getPrice() * product.getNum(), customer.getName(), new Date());
         }
         return Result.success("兑换成功");
 
     }
 
-    //根据身份证号查询兑换记录
+    //查询兑换记录
     @Override
-    public Page<OutboundRecord> listByIdNumber(String idNumber, Long currentPage, Long pageSize) {
+    public Page<OutboundRecord> listByVO(ProdcutQueryVO prodcutQueryVO, Long currentPage, Long pageSize) {
         //封装page对象
         Page<OutboundRecord> page = new Page<>(currentPage, pageSize);
         //获取branchId
         HashMap<String, Object> claims = ThreadLocalUtil.get();
         Integer branchId = (Integer) claims.get("number");
-        //根据身份证号查询兑换记录
         QueryWrapper<OutboundRecord> outboundRecordQueryWrapper = new QueryWrapper<>();
+        //不为空，根据条件查询兑换记录
         outboundRecordQueryWrapper.eq("branchId", branchId);
-        outboundRecordQueryWrapper.eq("customerIdNumber", idNumber);
+        if (prodcutQueryVO.getIdNumber() != null && !prodcutQueryVO.getIdNumber().equals("")) {
+            outboundRecordQueryWrapper.eq("customerIdNumber", prodcutQueryVO.getIdNumber());
+        }
+        if (prodcutQueryVO.getProductId() != null) {
+            outboundRecordQueryWrapper.eq("productId", prodcutQueryVO.getProductId());
+        }
+        //判断时间数组是否为空
+        if (prodcutQueryVO.getDate() != null && prodcutQueryVO.getDate().length == 2) {
+            outboundRecordQueryWrapper.between("date", prodcutQueryVO.getDate()[0], prodcutQueryVO.getDate()[1]);
+        }
         Page<OutboundRecord> pageInfo = outboundRecordMapper.selectPage(page, outboundRecordQueryWrapper);
         return pageInfo;
+
+
     }
 
     //删除兑换记录
@@ -171,6 +184,27 @@ public class ProductServiceImpl implements ProductService {
         Page<Inventory> pageInfo = inventoryMapper.selectPage(page, inventoryQueryWrapper);
         return pageInfo;
 
+    }
+    //查询入库记录
+    @Override
+    public Page<InboundRecord> getInboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
+        //封装page对象
+        Page<InboundRecord> page = new Page<>(currentPage, pageSize);
+        //获取branchId
+        HashMap<String, Object> claims = ThreadLocalUtil.get();
+        Integer branchId = (Integer) claims.get("number");
+        QueryWrapper<InboundRecord> inboundRecordQueryWrapper = new QueryWrapper<>();
+        //不为空，根据条件查询入库记录
+        inboundRecordQueryWrapper.eq("branchId", branchId);
+        if (inboundQueryVO.getProductId() != null) {
+            inboundRecordQueryWrapper.eq("productId", inboundQueryVO.getProductId());
+        }
+        //判断时间数组是否为空
+        if (inboundQueryVO.getDate() != null && inboundQueryVO.getDate().length == 2) {
+            inboundRecordQueryWrapper.between("date", inboundQueryVO.getDate()[0], inboundQueryVO.getDate()[1]);
+        }
+        Page<InboundRecord> pageInfo = inboundRecordMapper.selectPage(page, inboundRecordQueryWrapper);
+        return pageInfo;
     }
 }
 

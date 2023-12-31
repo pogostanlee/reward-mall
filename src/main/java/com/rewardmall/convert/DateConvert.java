@@ -12,8 +12,6 @@ public class DateConvert implements Converter<String, Date> {
     static {
     list.add(new SimpleDateFormat("yyyy-MM-dd"));
     list.add(new SimpleDateFormat("yyyy/MM/dd"));
-    list.add(new SimpleDateFormat("yyyy年MM月dd日"));
-
     }
     //日期格式转换
     @Override

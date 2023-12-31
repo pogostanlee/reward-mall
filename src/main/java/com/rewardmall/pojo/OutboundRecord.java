@@ -31,6 +31,6 @@ public class OutboundRecord {
     @TableField("name")
     private String name;//客户姓名
     @TableField("date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date date;//出库日期
 }

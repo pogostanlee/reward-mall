@@ -23,5 +23,6 @@ public class Inventory {
     private Integer total;//商品总量
     @TableField("branchId")
     private Integer branchId;//所属支行
-
+    @TableField("reback")
+    private Integer reback;//退货数量
 }

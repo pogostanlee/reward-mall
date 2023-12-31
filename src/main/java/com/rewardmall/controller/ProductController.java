@@ -3,10 +3,11 @@ package com.rewardmall.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rewardmall.mapper.OutboundRecordMapper;
 import com.rewardmall.pojo.*;
+import com.rewardmall.pojo.VO.InboundQueryVO;
+import com.rewardmall.pojo.VO.ProdcutQueryVO;
 import com.rewardmall.pojo.VO.ProductVO;
 import com.rewardmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,18 +39,16 @@ public class ProductController {
 
     //查询用户兑换记录
     @RequestMapping("/exchangeList")
-    public PageBean<OutboundRecord> exchangeList(String idNumber, Long currentPage, Long pageSize) {
-        //获取前端传递数据进行查询
-        if (StringUtils.hasText(idNumber)) {
-            //根据身份证号查询
-            Page<OutboundRecord> pageInfo = productService.listByIdNumber(idNumber, currentPage, pageSize);
+    public PageBean<OutboundRecord> exchangeList(ProdcutQueryVO prodcutQueryVO, Long currentPage, Long pageSize) {
+
+            //查询
+            Page<OutboundRecord> pageInfo = productService.listByVO(prodcutQueryVO, currentPage, pageSize);
             //封装返回数据
             PageBean<OutboundRecord> pageBean = new PageBean<>();
             pageBean.setTotal(pageInfo.getTotal());
             pageBean.setItems(pageInfo.getRecords());
             return pageBean;
-        }
-        return null;
+
     }
 
     //删除兑换记录
@@ -70,4 +69,16 @@ public class ProductController {
             pageBean.setItems(pageInfo.getRecords());
             return pageBean;
     }
+    //查询入库记录
+    @RequestMapping("/inbound")
+    public PageBean<InboundRecord> inbound(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
+            //根据商品id查询
+            Page<InboundRecord> pageInfo = productService.getInboundList(inboundQueryVO, currentPage, pageSize);
+            //封装返回数据
+            PageBean<InboundRecord> pageBean = new PageBean<>();
+            pageBean.setTotal(pageInfo.getTotal());
+            pageBean.setItems(pageInfo.getRecords());
+            return pageBean;
+    }
+
 }

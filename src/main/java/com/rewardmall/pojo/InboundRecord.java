@@ -24,6 +24,6 @@ public class InboundRecord {
     private Integer productId;//商品id
     @TableField("quantity")
     private Integer quantity;//入库数量
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date date;//入库日期
 }

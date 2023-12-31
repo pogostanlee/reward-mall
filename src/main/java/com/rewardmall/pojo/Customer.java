@@ -31,10 +31,6 @@ public class Customer {
     @TableField("idNumber")
     @ExcelProperty("身份证号")
     private  String idNumber;//身份证号
-    @NotEmpty
-    @TableField("manager")
-    @ExcelProperty("客户经理")
-    private  String manager;//客户经理
     @TableField("totalDeposit")
     @ExcelProperty("总存款")
     private Integer totalDeposit;//总存款
