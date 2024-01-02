@@ -10,6 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 public class InboundQueryVO {
+    private Integer branchId;//支行id
     private Integer productId;//商品id
     private Date[] date;//兑换日期
 }

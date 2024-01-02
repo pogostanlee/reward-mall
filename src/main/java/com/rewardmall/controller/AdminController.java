@@ -8,6 +8,7 @@ import com.rewardmall.mapper.UserMapper;
 import com.rewardmall.pojo.*;
 import com.rewardmall.pojo.VO.CustomerQueryVO;
 import com.rewardmall.pojo.VO.DepositQueryVO;
+import com.rewardmall.pojo.VO.InboundQueryVO;
 import com.rewardmall.service.AdminService;
 import com.rewardmall.service.CuntomerService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,9 +44,9 @@ public class AdminController {
     @RequestMapping("/branchList")
     public Result<List<User>> branchList() {
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        userQueryWrapper.eq("isAdmin", 0);
+
         //获取前端传递数据进行查询
-        List<User> list = userMapper.selectList(userQueryWrapper);
+        List<User> list = userMapper.selectList(null);
         //封装返回数据
         return Result.success(list);
     }
@@ -131,5 +132,10 @@ public class AdminController {
     public void exportDeposit(HttpServletResponse response, DepositQueryVO depositQueryVO) {
         adminService.exportDeposit(response, depositQueryVO);
     }
-
+    //获取所有入库记录
+    @RequestMapping("/inbound")
+    public PageBean<InboundRecord> inbound(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
+       PageBean<InboundRecord> pageBean= adminService.getInboundList(inboundQueryVO, currentPage, pageSize);
+        return pageBean;
+    }
 }

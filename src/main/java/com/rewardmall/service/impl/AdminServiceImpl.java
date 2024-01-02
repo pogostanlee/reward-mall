@@ -9,7 +9,9 @@ import com.rewardmall.mapper.InboundRecordMapper;
 import com.rewardmall.mapper.InventoryMapper;
 import com.rewardmall.pojo.*;
 import com.rewardmall.pojo.VO.DepositQueryVO;
+import com.rewardmall.pojo.VO.InboundQueryVO;
 import com.rewardmall.service.AdminService;
+import com.rewardmall.utils.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -33,11 +36,36 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public Result<String> addInventory(Integer productId, Integer branchId, Integer quantity) {
+        //获取部门号
+        HashMap<String, Object> cliams = ThreadLocalUtil.get();
+        Integer departmentId = (Integer) cliams.get("number");
+
+        //判断是否为总行添加库存
+        if(!departmentId.equals(branchId)){
+            //根据部门号与商品id查询剩余商品总量
+            QueryWrapper<Inventory> inventoryQueryWrapperAdmin = new QueryWrapper<>();
+            inventoryQueryWrapperAdmin.eq("productid", productId);
+            inventoryQueryWrapperAdmin.eq("branchid", departmentId);
+            Inventory inventoryAdmin = inventoryMapper.selectOne(inventoryQueryWrapperAdmin);
+            if (inventoryAdmin == null) {
+                throw new RuntimeException("库存不存在");
+            }
+            //判断库存是否足够
+            if (inventoryAdmin.getQuantity() < quantity) {
+                throw new RuntimeException("库存不足");
+            }
+            //库存足够则减去库存
+            inventoryAdmin.setQuantity(inventoryAdmin.getQuantity() - quantity);
+            inventoryMapper.updateById(inventoryAdmin);
+        }
+
+
         //判断库存是否存在
         QueryWrapper<Inventory> inventoryQueryWrapper = new QueryWrapper<>();
         inventoryQueryWrapper.eq("productid", productId);
         inventoryQueryWrapper.eq("branchid", branchId);
         Inventory inventory = inventoryMapper.selectOne(inventoryQueryWrapper);
+
         if (inventory != null) {
             //存在则更新库存
             inventory.setQuantity(inventory.getQuantity() + quantity);
@@ -91,6 +119,7 @@ public class AdminServiceImpl implements AdminService {
 
 
     }
+
     //查询所有存款信息
     @Override
     public PageBean<Deposit> getAllDeposit(DepositQueryVO depositQueryVO, Long currentPage, Long pageSize) {
@@ -101,16 +130,16 @@ public class AdminServiceImpl implements AdminService {
         if (depositQueryVO.getBranchId() != null) {
             depositQueryWrapper.eq("branchId", depositQueryVO.getBranchId());
         }
-        if (depositQueryVO.getIdNumber() != null&&!depositQueryVO.getIdNumber().equals("")) {
+        if (depositQueryVO.getIdNumber() != null && !depositQueryVO.getIdNumber().equals("")) {
             depositQueryWrapper.eq("customerIdNumber", depositQueryVO.getIdNumber());
         }
-        if (depositQueryVO.getStartNumber() != null&&depositQueryVO.getEndNumber() != null) {
+        if (depositQueryVO.getStartNumber() != null && depositQueryVO.getEndNumber() != null) {
             depositQueryWrapper.between("deposit", depositQueryVO.getStartNumber(), depositQueryVO.getEndNumber());
         }
         if (depositQueryVO.getIsNewDeposit() != null) {
             depositQueryWrapper.eq("isNewDeposit", depositQueryVO.getIsNewDeposit());
         }
-        if (depositQueryVO.getReceptionist() != null&&!depositQueryVO.getReceptionist().equals("")) {
+        if (depositQueryVO.getReceptionist() != null && !depositQueryVO.getReceptionist().equals("")) {
             depositQueryWrapper.eq("receptionist", depositQueryVO.getReceptionist());
         }
         if (depositQueryVO.getMonthDiff() != null) {
@@ -127,6 +156,7 @@ public class AdminServiceImpl implements AdminService {
         pageBean.setItems(pageInfo.getRecords());
         return pageBean;
     }
+
     //导出所有存款excel
     @Override
     public void exportDeposit(HttpServletResponse response, DepositQueryVO depositQueryVO) {
@@ -142,16 +172,16 @@ public class AdminServiceImpl implements AdminService {
             if (depositQueryVO.getBranchId() != null) {
                 depositQueryWrapper.eq("branchId", depositQueryVO.getBranchId());
             }
-            if (depositQueryVO.getIdNumber() != null&&!depositQueryVO.getIdNumber().equals("")) {
+            if (depositQueryVO.getIdNumber() != null && !depositQueryVO.getIdNumber().equals("")) {
                 depositQueryWrapper.eq("customerIdNumber", depositQueryVO.getIdNumber());
             }
-            if (depositQueryVO.getStartNumber() != null&&depositQueryVO.getEndNumber() != null) {
+            if (depositQueryVO.getStartNumber() != null && depositQueryVO.getEndNumber() != null) {
                 depositQueryWrapper.between("deposit", depositQueryVO.getStartNumber(), depositQueryVO.getEndNumber());
             }
             if (depositQueryVO.getIsNewDeposit() != null) {
                 depositQueryWrapper.eq("isNewDeposit", depositQueryVO.getIsNewDeposit());
             }
-            if (depositQueryVO.getReceptionist() != null&&!depositQueryVO.getReceptionist().equals("")) {
+            if (depositQueryVO.getReceptionist() != null && !depositQueryVO.getReceptionist().equals("")) {
                 depositQueryWrapper.eq("receptionist", depositQueryVO.getReceptionist());
             }
             if (depositQueryVO.getMonthDiff() != null) {
@@ -169,5 +199,31 @@ public class AdminServiceImpl implements AdminService {
             throw new RuntimeException(e);
         }
 
+    }
+    //获取所有入库记录
+    @Override
+    public PageBean<InboundRecord> getInboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
+        //封装page对象
+        Page<InboundRecord> page = new Page<>(currentPage, pageSize);
+        QueryWrapper<InboundRecord> inboundRecordQueryWrapper = new QueryWrapper<>();
+        //不为空，根据条件查询入库记录
+        if (inboundQueryVO.getProductId() != null) {
+            inboundRecordQueryWrapper.eq("productId", inboundQueryVO.getProductId());
+        }
+        //判断时间数组是否为空
+        if (inboundQueryVO.getDate() != null && inboundQueryVO.getDate().length == 2) {
+            inboundRecordQueryWrapper.between("date", inboundQueryVO.getDate()[0], inboundQueryVO.getDate()[1]);
+        }
+        //判断支行是否为空
+        if (inboundQueryVO.getBranchId() != null) {
+            inboundRecordQueryWrapper.eq("branchId", inboundQueryVO.getBranchId());
+        }
+        //查询入库记录
+        Page<InboundRecord> pageInfo = inboundRecordMapper.selectPage(page, inboundRecordQueryWrapper);
+        //封装返回数据
+        PageBean<InboundRecord> pageBean = new PageBean<>();
+        pageBean.setTotal(pageInfo.getTotal());
+        pageBean.setItems(pageInfo.getRecords());
+        return pageBean;
     }
 }
