@@ -36,6 +36,10 @@ public class Deposit {
     @ExcelProperty("存款金额")
     private Integer deposit;//存款金额
     @NotEmpty
+    @TableField("newDeposit")
+    @ExcelProperty("新增存款金额")
+    private Integer newDeposit;//存款金额
+    @NotEmpty
     @TableField("depositDate")
     @DateTimeFormat("yyyy-MM-dd")
     @ExcelProperty("存款日期")

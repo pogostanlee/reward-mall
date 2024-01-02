@@ -10,7 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 public class DepositQueryVO {
-    private String Receptionist;//揽存人
+    private String receptionist;//揽存人
     private String idNumber;//客户身份证号
     private Integer startNumber;//存款起始金额
     private Integer endNumber;//存款终止金额

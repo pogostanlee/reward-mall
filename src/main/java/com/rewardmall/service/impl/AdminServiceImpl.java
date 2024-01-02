@@ -3,10 +3,7 @@ package com.rewardmall.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rewardmall.mapper.CustomerMapper;
-import com.rewardmall.mapper.DepositMapper;
-import com.rewardmall.mapper.InboundRecordMapper;
-import com.rewardmall.mapper.InventoryMapper;
+import com.rewardmall.mapper.*;
 import com.rewardmall.pojo.*;
 import com.rewardmall.pojo.VO.DepositQueryVO;
 import com.rewardmall.pojo.VO.InboundQueryVO;
@@ -32,6 +29,9 @@ public class AdminServiceImpl implements AdminService {
     private CustomerMapper customerMapper;
     @Autowired
     private DepositMapper depositMapper;
+    @Autowired
+    private ReboundRecordMapper reboundRecordMapper;
+
 
     @Override
     @Transactional
@@ -225,5 +225,59 @@ public class AdminServiceImpl implements AdminService {
         pageBean.setTotal(pageInfo.getTotal());
         pageBean.setItems(pageInfo.getRecords());
         return pageBean;
+    }
+    //获取上交产品记录
+    @Override
+    public PageBean<ReboundRecords> getReboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
+        //封装page对象
+        Page<ReboundRecords> page = new Page<>(currentPage, pageSize);
+        QueryWrapper<ReboundRecords> reboundRecordsQueryWrapper = new QueryWrapper<>();
+        //不为空，根据条件查询入库记录
+        if (inboundQueryVO.getProductId() != null) {
+            reboundRecordsQueryWrapper.eq("productId", inboundQueryVO.getProductId());
+        }
+        //判断时间数组是否为空
+        if (inboundQueryVO.getDate() != null && inboundQueryVO.getDate().length == 2) {
+            reboundRecordsQueryWrapper.between("date", inboundQueryVO.getDate()[0], inboundQueryVO.getDate()[1]);
+        }
+        //判断支行是否为空
+        if (inboundQueryVO.getBranchId() != null) {
+            reboundRecordsQueryWrapper.eq("branchId", inboundQueryVO.getBranchId());
+        }
+        //查询入库记录
+        Page<ReboundRecords> pageInfo = reboundRecordMapper.selectPage(page, reboundRecordsQueryWrapper);
+        //封装返回数据
+        PageBean<ReboundRecords> pageBean = new PageBean<>();
+        pageBean.setTotal(pageInfo.getTotal());
+        pageBean.setItems(pageInfo.getRecords());
+        return pageBean;
+    }
+    //添加上交产品记录
+    @Override
+    public Result<String> addRebound(Integer productId, Integer branchId, Integer quantity) {
+        //根据部门号与商品id查询剩余商品总量
+        QueryWrapper<Inventory> inventoryQueryWrapper = new QueryWrapper<>();
+        inventoryQueryWrapper.eq("productid", productId);
+        inventoryQueryWrapper.eq("branchid", branchId);
+        Inventory inventory = inventoryMapper.selectOne(inventoryQueryWrapper);
+        //判断库存是否足够
+        if (inventory.getQuantity() < quantity) {
+            throw new RuntimeException("库存不足");
+        }
+        //库存足够则减去库存
+        inventory.setQuantity(inventory.getQuantity() - quantity);
+        //将减去的库存添加到上交数量
+        inventory.setReback(inventory.getReback() + quantity);
+        //更新库存
+        inventoryMapper.updateById(inventory);
+        //添加上交记录
+        ReboundRecords reboundRecords = new ReboundRecords();
+        reboundRecords.setProductId(productId);
+        reboundRecords.setBranchId(branchId);
+        reboundRecords.setProductNum(quantity);
+        reboundRecords.setDate(new Date());
+        reboundRecordMapper.insert(reboundRecords);
+        return Result.success("上交成功");
+
     }
 }

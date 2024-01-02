@@ -19,4 +19,5 @@ public class DepositVO {
     private Date depositDate;//存款日期
     private Date maturityDate;//到期日期
     private Integer isNewDeposit;//是否是新存款
+    private Integer newDeposit;//新增存款金额
 }

@@ -121,21 +121,40 @@ public class AdminController {
     public void exportCustomer(HttpServletResponse response) {
         adminService.exportCustomer(response);
     }
+
     //查询所有存款信息
     @RequestMapping("/getDeposit")
     public PageBean<Deposit> getDeposit(DepositQueryVO depositQueryVO, Long currentPage, Long pageSize) {
         PageBean<Deposit> depositPageBean = adminService.getAllDeposit(depositQueryVO, currentPage, pageSize);
         return depositPageBean;
     }
+
     //导出所有存款信息
     @RequestMapping("/exportDeposit")
-    public void exportDeposit(HttpServletResponse response, DepositQueryVO depositQueryVO) {
+    public void exportDeposit(HttpServletResponse response,DepositQueryVO depositQueryVO) {
+        System.out.println(depositQueryVO);
         adminService.exportDeposit(response, depositQueryVO);
     }
+
     //获取所有入库记录
     @RequestMapping("/inbound")
     public PageBean<InboundRecord> inbound(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
-       PageBean<InboundRecord> pageBean= adminService.getInboundList(inboundQueryVO, currentPage, pageSize);
+        PageBean<InboundRecord> pageBean = adminService.getInboundList(inboundQueryVO, currentPage, pageSize);
         return pageBean;
+    }
+
+    //获取上交产品记录
+    @RequestMapping("/rebound")
+    public PageBean<ReboundRecords> rebound(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
+        PageBean<ReboundRecords> pageBean = adminService.getReboundList(inboundQueryVO, currentPage, pageSize);
+        return pageBean;
+    }
+
+    //添加上交产品记录
+    @RequestMapping("/addRebound")
+    public Result<String> addRebound(Integer productId, Integer branchId, Integer quantity) {
+        //获取前端传递数据进行添加
+        Result<String> result = adminService.addRebound(productId, branchId, quantity);
+        return result;
     }
 }

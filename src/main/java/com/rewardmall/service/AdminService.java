@@ -1,9 +1,6 @@
 package com.rewardmall.service;
 
-import com.rewardmall.pojo.Deposit;
-import com.rewardmall.pojo.InboundRecord;
-import com.rewardmall.pojo.PageBean;
-import com.rewardmall.pojo.Result;
+import com.rewardmall.pojo.*;
 import com.rewardmall.pojo.VO.DepositQueryVO;
 import com.rewardmall.pojo.VO.InboundQueryVO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,4 +16,8 @@ public interface AdminService {
     void exportDeposit(HttpServletResponse response, DepositQueryVO depositQueryVO);
     //获取所有入库记录
     PageBean<InboundRecord> getInboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize);
+    //获取上交产品记录
+    PageBean<ReboundRecords> getReboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize);
+    //添加上交产品记录
+    Result<String> addRebound(Integer productId, Integer branchId, Integer quantity);
 }

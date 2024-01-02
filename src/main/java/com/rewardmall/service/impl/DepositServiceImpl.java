@@ -123,6 +123,7 @@ public class DepositServiceImpl implements DepositService {
         deposit.setDepositAccount(depositVO.getDepositAccount());
         deposit.setSubDepositAccount(depositVO.getSubDepositAccount());
         deposit.setMonthDiff(depositVO.getMonthDiff());
+        deposit.setNewDeposit(depositVO.getNewDeposit());
         //添加存款记录
         int count = depositMapper.insert(deposit);
         //判断是否添加成功
