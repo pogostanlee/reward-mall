@@ -8,6 +8,7 @@ import com.rewardmall.pojo.VO.ProdcutQueryVO;
 import com.rewardmall.pojo.VO.ProductVO;
 import com.rewardmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RequestMapping("/product")
 @RestController
+@CrossOrigin
 public class ProductController {
     @Autowired
     private ProductService productService;

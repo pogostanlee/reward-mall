@@ -13,11 +13,12 @@ import com.rewardmall.service.AdminService;
 import com.rewardmall.service.CuntomerService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+@CrossOrigin
 @RequestMapping("/admin")
 @RestController
 public class AdminController {
@@ -65,6 +66,14 @@ public class AdminController {
         pageBean.setItems(pageInfo.getRecords());
         pageBean.setTotal(pageInfo.getTotal());
         return pageBean;
+    }
+    //获取所有商品信息不带分页
+    @RequestMapping("/allProductsListNoPage")
+    public Result<List<Product>> allProductsListNoPage() {
+        //获取前端传递数据进行查询
+        List<Product> list = productMapper.selectList(null);
+        //封装返回数据
+        return Result.success(list);
     }
 
     //修改商品信息

@@ -23,7 +23,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         ArrayList<String> strings = new ArrayList<>();
         strings.add("/user/login");
-//        strings.add("/admin/exportCustomer");
         //登录接口和注册接口不拦截
         registry.addInterceptor(loginInterceptor).excludePathPatterns(strings);
 

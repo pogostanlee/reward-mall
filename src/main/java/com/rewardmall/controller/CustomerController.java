@@ -8,9 +8,10 @@ import com.rewardmall.pojo.VO.CustomerQueryVO;
 import com.rewardmall.service.CuntomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+@CrossOrigin
 @RequestMapping("/customer")
 @RestController
 public class CustomerController {
