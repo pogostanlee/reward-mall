@@ -280,4 +280,32 @@ public class AdminServiceImpl implements AdminService {
         return Result.success("上交成功");
 
     }
+    //删除库存记录
+    @Override
+    @Transactional
+    public Result<String> deleteInboundById(InboundRecord inboundRecord) {
+        //根据productId与branchId查询库存
+        QueryWrapper<Inventory> inventoryQueryWrapper = new QueryWrapper<>();
+        inventoryQueryWrapper.eq("productid", inboundRecord.getProductId());
+        inventoryQueryWrapper.eq("branchid", inboundRecord.getBranchId());
+        Inventory inventory = inventoryMapper.selectOne(inventoryQueryWrapper);
+        //判断库存是否存在
+        if (inventory == null) {
+            throw new RuntimeException("库存不存在");
+        }
+        //判断库存是否足够
+        if (inventory.getQuantity() < inboundRecord.getQuantity()) {
+            throw new RuntimeException("库存不足无法删除");
+        }
+        //库存足够则减去库存
+        inventory.setQuantity(inventory.getQuantity() - inboundRecord.getQuantity());
+        //同时减去total
+        inventory.setTotal(inventory.getTotal() - inboundRecord.getQuantity());
+        //更新库存
+        inventoryMapper.updateById(inventory);
+        //删除入库记录
+        inboundRecordMapper.deleteById(inboundRecord.getId());
+        return Result.success("删除成功");
+
+    }
 }

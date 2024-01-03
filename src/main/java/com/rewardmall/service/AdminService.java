@@ -20,4 +20,6 @@ public interface AdminService {
     PageBean<ReboundRecords> getReboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize);
     //添加上交产品记录
     Result<String> addRebound(Integer productId, Integer branchId, Integer quantity);
+    //删除库存记录
+    Result<String> deleteInboundById(InboundRecord inboundRecord);
 }

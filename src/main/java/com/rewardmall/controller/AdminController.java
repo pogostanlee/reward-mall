@@ -124,7 +124,12 @@ public class AdminController {
         Result<String> result = adminService.addInventory(productId, branchId, quantity);
         return result;
     }
-
+    //删除库存记录
+    @RequestMapping("/deleteInboundById")
+    public Result<String> deleteInboundById(InboundRecord inboundRecord) {
+        Result<String> result = adminService.deleteInboundById(inboundRecord);
+        return result;
+    }
     //全量导出用户信息
     @RequestMapping("/exportCustomer")
     public void exportCustomer(HttpServletResponse response) {
