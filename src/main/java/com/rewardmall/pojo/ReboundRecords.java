@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@TableName("reboundRecords")
+@TableName("reboundrecords")
 public class ReboundRecords {
     @TableId(type = IdType.AUTO)
     private Integer id;//主键

@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@TableName("outboundRecords")
+@TableName("outboundrecords")
 public class OutboundRecord {
     @TableId(type = IdType.AUTO)
     private Integer id;//主键

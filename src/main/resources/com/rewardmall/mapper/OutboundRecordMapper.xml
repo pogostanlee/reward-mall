@@ -3,6 +3,6 @@
 <mapper namespace="com.rewardmall.mapper.OutboundRecordMapper">
 
     <insert id="insert">
-        insert into outboundRecords ( branchId,customerIdNumber,productId,quantity,points,name,date) values (#{branchId}, #{customerIdNumber}, #{productId},#{quantity}, #{points}, #{name}, #{date})
+        insert into outboundrecords ( branchId,customerIdNumber,productId,quantity,points,name,date) values (#{branchId}, #{customerIdNumber}, #{productId},#{quantity}, #{points}, #{name}, #{date})
     </insert>
 </mapper>

@@ -41,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
         Integer departmentId = (Integer) cliams.get("number");
 
         //判断是否为总行添加库存
-        if(!departmentId.equals(branchId)){
+        if (!departmentId.equals(branchId)) {
             //根据部门号与商品id查询剩余商品总量
             QueryWrapper<Inventory> inventoryQueryWrapperAdmin = new QueryWrapper<>();
             inventoryQueryWrapperAdmin.eq("productid", productId);
@@ -200,6 +200,7 @@ public class AdminServiceImpl implements AdminService {
         }
 
     }
+
     //获取所有入库记录
     @Override
     public PageBean<InboundRecord> getInboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
@@ -226,6 +227,7 @@ public class AdminServiceImpl implements AdminService {
         pageBean.setItems(pageInfo.getRecords());
         return pageBean;
     }
+
     //获取上交产品记录
     @Override
     public PageBean<ReboundRecords> getReboundList(InboundQueryVO inboundQueryVO, Long currentPage, Long pageSize) {
@@ -252,6 +254,7 @@ public class AdminServiceImpl implements AdminService {
         pageBean.setItems(pageInfo.getRecords());
         return pageBean;
     }
+
     //添加上交产品记录
     @Override
     public Result<String> addRebound(Integer productId, Integer branchId, Integer quantity) {
@@ -280,6 +283,7 @@ public class AdminServiceImpl implements AdminService {
         return Result.success("上交成功");
 
     }
+
     //删除库存记录
     @Override
     @Transactional
@@ -303,6 +307,24 @@ public class AdminServiceImpl implements AdminService {
         inventory.setTotal(inventory.getTotal() - inboundRecord.getQuantity());
         //更新库存
         inventoryMapper.updateById(inventory);
+        //将减去的库存添加给总行
+        //判断是否是总行物品
+        HashMap<String, Object> claims = ThreadLocalUtil.get();
+        Integer branchId = (Integer) claims.get("number");
+        if (!inboundRecord.getBranchId().equals(branchId)) {
+            //支行物品删除则将物品退还总行账户
+            QueryWrapper<Inventory> inventoryQueryWrapperAdmin = new QueryWrapper<>();
+            inventoryQueryWrapperAdmin.eq("productId", inboundRecord.getProductId());
+            inventoryQueryWrapperAdmin.eq("branchId", branchId);
+            Inventory inventoryAdmin = inventoryMapper.selectOne(inventoryQueryWrapperAdmin);
+            //判断总行是否存在该物品
+            if (inventoryAdmin == null) {
+                throw new RuntimeException("总行库存不存在");
+            }
+            //总行库存存在则增加库存
+            inventoryAdmin.setQuantity(inventoryAdmin.getQuantity() + inboundRecord.getQuantity());
+            inventoryMapper.updateById(inventoryAdmin);
+        }
         //删除入库记录
         inboundRecordMapper.deleteById(inboundRecord.getId());
         return Result.success("删除成功");
