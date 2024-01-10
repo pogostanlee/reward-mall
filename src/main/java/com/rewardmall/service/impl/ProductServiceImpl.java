@@ -123,8 +123,10 @@ public class ProductServiceImpl implements ProductService {
     public Result<String> deleteId(OutboundRecord outboundRecord) {
         //获取用户身份证号
         String idNumber = outboundRecord.getCustomerIdNumber();
+        //获取支行信息
+        Integer branchId = outboundRecord.getBranchId();
         //根据身份证号查询用户信息
-        Customer customer = customerMapper.selectByIdNumber(idNumber);
+        Customer customer = customerMapper.selectByIdNumberAndBranchId(idNumber, branchId);
         //判断用户是否存在
         if (customer == null) {
             //用户不存在，抛出异常

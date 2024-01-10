@@ -41,10 +41,6 @@ public class CustomerController {
     public Result<Customer> selectByIdNumber(String idNumber) {
         //获取前端传递数据进行查询
         Customer customer = customerService.selectByIdNumber(idNumber);
-        //非空判断
-        if (customer == null) {
-            return Result.error("用户不存在");
-        }
         return Result.success(customer);
     }
 }

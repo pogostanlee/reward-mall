@@ -148,8 +148,10 @@ public class DepositServiceImpl implements DepositService {
     public Result<String> deleteId(Deposit deposit) {
         //获取存款的客户id
         String idNumber = deposit.getCustomerIdNumber();
+        //获取支行branchId
+        Integer branchId = deposit.getBranchId();
         //根据客户id查询客户信息
-        Customer customer = customerMapper.selectByIdNumber(idNumber);
+        Customer customer = customerMapper.selectByIdNumberAndBranchId(idNumber, branchId);
         //判断客户是否存在
         if (customer == null) {
             //客户不存在，抛出异常
