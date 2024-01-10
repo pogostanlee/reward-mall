@@ -82,10 +82,13 @@ public class DepositServiceImpl implements DepositService {
     @Override
     @Transactional
     public Result<String> add(DepositVO depositVO) {
+        //获取支行branchId
+        HashMap<String, Object> claims = ThreadLocalUtil.get();
+        Integer branchId = (Integer) claims.get("number");
         //获取客户身份证号
         String idNumber = depositVO.getCustomerIdNumber();
-        //根据身份证号查询客户信息
-        Customer customer = customerMapper.selectByIdNumber(idNumber);
+        //根据身份证号和支行id查询客户信息
+        Customer customer = customerMapper.selectcustomer(idNumber, branchId);
         //判断customer是否为空
         if (customer == null) {
             //为空，抛出异常
@@ -105,9 +108,7 @@ public class DepositServiceImpl implements DepositService {
         Integer points = (int) (depositVO.getDeposit() / 100 * ACTIVITY_RATE);
         //判断存款日期是否为生日
 
-        //获取支行branchId
-        HashMap<String, Object> claims = ThreadLocalUtil.get();
-        Integer branchId = (Integer) claims.get("number");
+
         //封装存款对象
         Deposit deposit = new Deposit();
         deposit.setBranchId(branchId);

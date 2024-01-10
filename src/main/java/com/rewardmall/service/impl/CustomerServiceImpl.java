@@ -47,8 +47,15 @@ public class CustomerServiceImpl implements CuntomerService {
     //根据身份证查询用户信息
     @Override
     public Customer selectByIdNumber(String idNumber) {
-        //获取前端传递数据进行查询
-        Customer customer = customerMapper.selectByIdNumber(idNumber);
+        //获取支行id
+        HashMap<String,Object> claims = ThreadLocalUtil.get();
+        Integer branchId = (Integer) claims.get("number");
+        //根据支行id和身份证查询用户信息
+        QueryWrapper<Customer> customerQueryWrapper = new QueryWrapper<>();
+        customerQueryWrapper.eq("idNumber",idNumber);
+        customerQueryWrapper.eq("branchId",branchId);
+        //查询
+        Customer customer = customerMapper.selectOne(customerQueryWrapper);
         return customer;
     }
     //获取所有用户信息(admin)
