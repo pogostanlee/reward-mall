@@ -171,4 +171,9 @@ public class AdminController {
         Result<String> result = adminService.addRebound(productId, branchId, quantity);
         return result;
     }
+    //导出库存记录excelbiao
+    @RequestMapping("/exExcelInven")
+    public void exportInventory(HttpServletResponse response) {
+        adminService.exportInventory(response);
+    }
 }

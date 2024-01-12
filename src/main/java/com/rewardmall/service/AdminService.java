@@ -22,4 +22,6 @@ public interface AdminService {
     Result<String> addRebound(Integer productId, Integer branchId, Integer quantity);
     //删除库存记录
     Result<String> deleteInboundById(InboundRecord inboundRecord);
+    //导出所有库存excel
+    void exportInventory(HttpServletResponse response);
 }

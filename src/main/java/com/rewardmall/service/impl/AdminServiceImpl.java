@@ -31,6 +31,8 @@ public class AdminServiceImpl implements AdminService {
     private DepositMapper depositMapper;
     @Autowired
     private ReboundRecordMapper reboundRecordMapper;
+    @Autowired
+    private ProductMapper productMapper;
 
 
     @Override
@@ -161,7 +163,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void exportDeposit(HttpServletResponse response, DepositQueryVO depositQueryVO) {
         try {
-
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
             // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
@@ -329,5 +330,33 @@ public class AdminServiceImpl implements AdminService {
         inboundRecordMapper.deleteById(inboundRecord.getId());
         return Result.success("删除成功");
 
+    }
+    //导出库存excel
+    @Override
+    public void exportInventory(HttpServletResponse response) {
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+            String fileName = URLEncoder.encode("存款信息", "UTF-8").replaceAll("\\+", "%20");
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+            //查询库存信息
+            List<Inventory> inventories = inventoryMapper.selectList(null);
+            //获取所有商品信息
+            List<Product> products = productMapper.selectList(null);
+            //遍历库存信息，将商品名称添加到库存信息中
+            for (
+                    Inventory inventory : inventories) {
+                for (Product product : products) {
+                    if (inventory.getProductId().equals(product.getId())) {
+                        inventory.setProductName(product.getName());
+                    }
+                }
+            }
+            //创建excel
+            EasyExcel.write(response.getOutputStream(), Inventory.class).sheet("库存信息").doWrite(inventories);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
